@@ -12,12 +12,19 @@ import (
 )
 
 var _ app.Mounter = (*Chat)(nil)
+var _ app.AppUpdater = (*Chat)(nil)
 
 type Chat struct {
 	app.Compo
 	messages []string
 	conn     natsws.Connection
 	who      string
+}
+
+func (d *Chat) OnAppUpdate(ctx app.Context) {
+	if ctx.AppUpdateAvailable() {
+		ctx.Reload()
+	}
 }
 
 const Messages = "chatMessages"
@@ -89,7 +96,7 @@ func (d *Chat) sendMessage(ctx app.Context, msg string) {
 }
 
 func (d *Chat) Render() app.UI {
-
+	// &natsws.Component{},
 	var reversed []string
 
 	reversed = append(reversed, d.messages...)

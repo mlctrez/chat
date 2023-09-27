@@ -347,9 +347,8 @@ func (s *Service) setupGoAppHandler(engine *gin.Engine) (err error) {
 		handler.AutoUpdateInterval = time.Second * 3
 		handler.Version = ""
 	} else {
-		handler.AutoUpdateInterval = time.Minute
-		handler.Version = ""
-		//handler.Version = fmt.Sprintf("%s@%s", goapp.Version, goapp.Commit)
+		handler.AutoUpdateInterval = time.Hour
+		handler.Version = fmt.Sprintf("%s@%s", goapp.Version, goapp.Commit)
 	}
 
 	h := gin.WrapH(handler)
