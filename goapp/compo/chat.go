@@ -1,4 +1,4 @@
-package ui
+package compo
 
 import (
 	"bufio"
@@ -96,7 +96,6 @@ func (d *Chat) sendMessage(ctx app.Context, msg string) {
 }
 
 func (d *Chat) Render() app.UI {
-	// &natsws.Component{},
 	var reversed []string
 
 	reversed = append(reversed, d.messages...)
@@ -107,9 +106,10 @@ func (d *Chat) Render() app.UI {
 	users := []string{"Luke", "Leia", "Mom", "Dad"}
 
 	return app.Div().Class("container-fluid").Style("padding-top", "1em").Body(
+		&natsws.Component{},
 		app.Button().ID("who").Class("btn btn-secondary dropdown-toggle").
 			Type("button").DataSet("bs-toggle", "dropdown").
-			Aria("expanded", "false").Text(""),
+			Aria("expanded", "false"),
 		app.Ul().Class("dropdown-menu").Body(
 			app.Range(users).Slice(func(i int) app.UI {
 				return app.Li().Body(
@@ -127,7 +127,8 @@ func (d *Chat) Render() app.UI {
 		app.Button().Type("button").Class("btn btn-primary").Text("Arrived").OnClick(func(ctx app.Context, e app.Event) {
 			d.sendMessage(ctx, "Arrived")
 		}),
-		app.Input().ID("message").Placeholder("").Class("form-control").Size(20).OnKeyPress(func(ctx app.Context, e app.Event) {
+		//app.Hr(),
+		app.Input().ID("message").Class("form-control").Size(20).OnKeyPress(func(ctx app.Context, e app.Event) {
 			if strings.ToLower(e.Get("key").String()) == "enter" {
 				inputField := app.Window().GetElementByID("message")
 				msg := inputField.Get("value").String()
@@ -135,7 +136,6 @@ func (d *Chat) Render() app.UI {
 				d.sendMessage(ctx, msg)
 			}
 		}),
-		app.Br(),
 		app.Ul().Class("list-group").Body(app.Range(reversed).Slice(func(i int) app.UI {
 			return app.Li().Class("list-group-item").Text(reversed[i])
 		})),
