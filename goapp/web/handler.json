@@ -1,0 +1,39 @@
+{
+  "Name": "Chat",
+  "ShortName": "Chat",
+  "Icon": {
+    "Default": "https://raw.githubusercontent.com/mlctrez/chat/master/goapp/web/chat-192.png",
+    "Large": "https://raw.githubusercontent.com/mlctrez/chat/master/goapp/web/chat-512.png",
+    "AppleTouch": "https://raw.githubusercontent.com/mlctrez/chat/master/goapp/web/chat-192.png",
+    "SVG": "https://raw.githubusercontent.com/mlctrez/chat/master/goapp/web/chat.svg"
+  },
+  "BackgroundColor": "#222",
+  "ThemeColor": "#000",
+  "LoadingLabel": "",
+  "Lang": "",
+  "Title": "Chat",
+  "Description": "",
+  "Author": "",
+  "Keywords": [],
+  "Image": "",
+  "Styles": [
+    "/web/bootstrap.min.css"
+  ],
+  "Scripts": [
+    "/web/bootstrap.bundle.min.js"
+  ],
+  "CacheableResources": [
+    "https://raw.githubusercontent.com/mlctrez/chat/master/goapp/web/chat-192.png",
+    "https://raw.githubusercontent.com/mlctrez/chat/master/goapp/web/chat-512.png",
+    "https://raw.githubusercontent.com/mlctrez/chat/master/goapp/web/chat.svg"
+  ],
+  "RawHeaders": [],
+  "AutoUpdateInterval": 0,
+  "Env": {
+    "SAMPLE_ENV_KEY": "SAMPLE_ENV_VALUE"
+  },
+  "InternalURLs": [],
+  "ProxyResources": [],
+  "Version": "",
+  "WasmContentLengthHeader": ""
+}
