@@ -80,6 +80,14 @@ func (d *Chat) changeButton(reason natsws.ChangeReason) {
 func (d *Chat) onMessage(msg *nats.Msg) {
 	d.messages = append(d.messages, string(msg.Data))
 	d.Update()
+	go func() {
+		for i := 0; i < 5; i++ {
+			app.Window().Call("changeBackground", "red")
+			time.Sleep(500 * time.Millisecond)
+			app.Window().Call("changeBackground", "")
+			time.Sleep(500 * time.Millisecond)
+		}
+	}()
 }
 
 func (d *Chat) sendMessage(ctx app.Context, msg string) {

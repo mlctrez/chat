@@ -20,7 +20,8 @@
     "/web/bootstrap.min.css"
   ],
   "Scripts": [
-    "/web/bootstrap.bundle.min.js"
+    "/web/bootstrap.bundle.min.js",
+    "/web/background.js"
   ],
   "CacheableResources": [
     "https://raw.githubusercontent.com/mlctrez/chat/master/goapp/web/chat-192.png",
