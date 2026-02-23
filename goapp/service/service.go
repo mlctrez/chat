@@ -84,6 +84,10 @@ func (s *Service) startNats() (err error) {
 	s.chatSub, err = s.natsConn.Subscribe("chatMessages", func(msg *nats.Msg) {
 		lastMessagesMu.Lock()
 		defer lastMessagesMu.Unlock()
+		if string(msg.Data) == "CLEAR_MESSAGES" {
+			lastMessages = []string{}
+			return
+		}
 		for len(lastMessages) > 20 {
 			lastMessages = lastMessages[1:]
 		}

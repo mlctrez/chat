@@ -81,6 +81,12 @@ func (d *Chat) changeButton(reason natsws.ChangeReason) {
 
 }
 func (d *Chat) onMessage(msg *nats.Msg) {
+	if string(msg.Data) == "CLEAR_MESSAGES" {
+		d.messages = []string{}
+		d.flashes = 0
+		d.Update()
+		return
+	}
 	d.messages = append(d.messages, string(msg.Data))
 	d.Update()
 
@@ -171,5 +177,10 @@ func (d *Chat) Render() app.UI {
 		app.Ul().Class("list-group").Body(app.Range(reversed).Slice(func(i int) app.UI {
 			return app.Li().Class("list-group-item").Text(reversed[i])
 		})),
+		app.Div().Style("margin-top", "50px").Body(
+			app.Button().Class("btn btn-warning").Text("clear").OnClick(func(ctx app.Context, e app.Event) {
+				_ = d.conn.Publish(Messages, []byte("CLEAR_MESSAGES"))
+			}),
+		),
 	)
 }
