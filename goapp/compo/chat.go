@@ -3,12 +3,13 @@ package compo
 import (
 	"bufio"
 	"fmt"
-	"github.com/maxence-charriere/go-app/v9/pkg/app"
-	natsws "github.com/mlctrez/goapp-natsws"
-	"github.com/nats-io/nats.go"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/maxence-charriere/go-app/v9/pkg/app"
+	natsws "github.com/mlctrez/goapp-natsws"
+	"github.com/nats-io/nats.go"
 )
 
 var _ app.Mounter = (*Chat)(nil)
@@ -19,6 +20,7 @@ type Chat struct {
 	messages []string
 	conn     natsws.Connection
 	who      string
+	flashes  int
 }
 
 func (d *Chat) OnAppUpdate(ctx app.Context) {
@@ -28,6 +30,7 @@ func (d *Chat) OnAppUpdate(ctx app.Context) {
 }
 
 const Messages = "chatMessages"
+const btnMargin = "10px"
 
 func (d *Chat) OnMount(ctx app.Context) {
 
@@ -80,12 +83,23 @@ func (d *Chat) changeButton(reason natsws.ChangeReason) {
 func (d *Chat) onMessage(msg *nats.Msg) {
 	d.messages = append(d.messages, string(msg.Data))
 	d.Update()
+
+	d.flashes += 5
+	if d.flashes > 5 {
+		// already flashing
+		return
+	}
+
 	go func() {
-		for i := 0; i < 5; i++ {
+		for {
+			if d.flashes <= 0 {
+				break
+			}
 			app.Window().Call("changeBackground", "red")
 			time.Sleep(500 * time.Millisecond)
 			app.Window().Call("changeBackground", "")
 			time.Sleep(500 * time.Millisecond)
+			d.flashes--
 		}
 	}()
 }
@@ -103,6 +117,15 @@ func (d *Chat) sendMessage(ctx app.Context, msg string) {
 	}
 }
 
+func (d *Chat) actionButton(text string, msg string) app.UI {
+	return app.Button().Type("button").Class("btn btn-primary").
+		Style("margin-right", btnMargin).
+		Style("margin-bottom", "5px").
+		Text(text).OnClick(func(ctx app.Context, e app.Event) {
+		d.sendMessage(ctx, msg)
+	})
+}
+
 func (d *Chat) Render() app.UI {
 	var reversed []string
 
@@ -116,6 +139,8 @@ func (d *Chat) Render() app.UI {
 	return app.Div().Class("container-fluid").Style("padding-top", "1em").Body(
 		&natsws.Component{},
 		app.Button().ID("who").Class("btn btn-secondary dropdown-toggle").
+			Style("margin-right", btnMargin).
+			Style("margin-bottom", "5px").
 			Type("button").DataSet("bs-toggle", "dropdown").
 			Aria("expanded", "false"),
 		app.Ul().Class("dropdown-menu").Body(
@@ -129,21 +154,20 @@ func (d *Chat) Render() app.UI {
 				)
 			}),
 		),
-		app.Button().Type("button").Class("btn btn-primary").Text("Leaving").OnClick(func(ctx app.Context, e app.Event) {
-			d.sendMessage(ctx, "Leaving")
-		}),
-		app.Button().Type("button").Class("btn btn-primary").Text("Arrived").OnClick(func(ctx app.Context, e app.Event) {
-			d.sendMessage(ctx, "Arrived")
-		}),
+		d.actionButton("Leaving", "Leaving"),
+		d.actionButton("To Left", "Arrived : lot to left"),
+		d.actionButton("To Right", "Arrived : lot to light"),
 		//app.Hr(),
-		app.Input().ID("message").Class("form-control").Size(20).OnKeyPress(func(ctx app.Context, e app.Event) {
-			if strings.ToLower(e.Get("key").String()) == "enter" {
-				inputField := app.Window().GetElementByID("message")
-				msg := inputField.Get("value").String()
-				inputField.Set("value", nil)
-				d.sendMessage(ctx, msg)
-			}
-		}),
+		app.Input().ID("message").Class("form-control").Size(20).
+			Style("margin-bottom", "5px").
+			OnKeyPress(func(ctx app.Context, e app.Event) {
+				if strings.ToLower(e.Get("key").String()) == "enter" {
+					inputField := app.Window().GetElementByID("message")
+					msg := inputField.Get("value").String()
+					inputField.Set("value", nil)
+					d.sendMessage(ctx, msg)
+				}
+			}),
 		app.Ul().Class("list-group").Body(app.Range(reversed).Slice(func(i int) app.UI {
 			return app.Li().Class("list-group-item").Text(reversed[i])
 		})),
