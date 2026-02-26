@@ -162,7 +162,7 @@ func (d *Chat) Render() app.UI {
 		),
 		d.actionButton("Leaving", "Leaving"),
 		d.actionButton("To Left", "Arrived : lot to left"),
-		d.actionButton("To Right", "Arrived : lot to light"),
+		d.actionButton("To Right", "Arrived : lot to right"),
 		//app.Hr(),
 		app.Input().ID("message").Class("form-control").Size(20).
 			Style("margin-bottom", "5px").
